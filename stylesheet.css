@@ -1,0 +1,14 @@
+
+/* Tailwind and Google Fonts are loaded directly in index.html
+	for better performance and reliability.
+*/
+
+
+body {
+	font-family: 'Inter', sans-serif;
+}
+
+#result-content {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}

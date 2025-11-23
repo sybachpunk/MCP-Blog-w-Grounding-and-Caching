@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Multi-Agent Blog Generator</title>
+    
+    <!-- 
+      Stylesheet link
+    -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- 
+      'defer' is a critical best practice. It tells the browser:
+	      1. Download this file while you parse the HTML.
+	      2. Wait to run this script until the HTML is fully loaded.
+      This prevents the script from blocking the page load.
+    -->
+    <script src="app.js" defer></script>
+    
+    <!-- 
+      Load Tailwind and Fonts directly in the HTML for performance
+    -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+</head>
+<body class="h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    
+    <!-- 
+      Tailwind utility classes directly on the element for styling
+    -->
+    <div class="max-w-3xl w-full space-y-8 bg-white p-10 rounded-2xl shadow-xl">
+        
+        <!-- Header -->
+        <div>
+            <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+                Multi-Agent Blog Generator
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Generates, reviews, and optimizes a blog post in three steps following grounded MCP architecture.
+            </p>
+        </div>
+        
+        <!-- Input Form -->
+        <div class="space-y-6">
+            <!-- Blog Topic Input -->
+            <div>
+                <label for="prompt" class="block text-sm font-medium text-gray-700">
+                    Blog Post Topic or Prompt (Agent 1: Writer)
+                </label>
+                <div class="mt-1">
+                    <textarea id="prompt" name="prompt" rows="3" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2.5" placeholder="e.g., 'The future of renewable energy in 2025'"></textarea>
+                </div>
+            </div>
+            
+            <!-- Generate Button -->
+            <div>
+                <button id="generate-btn" type="button" class="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-4 text-sm font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <svg id="loading-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span id="btn-text">Generate Post</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Error Display -->
+        <div id="error-container" class="hidden rounded-md bg-red-50 p-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <h3 id="error-message" class="text-sm font-medium text-red-800"></h3>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Result Display Area -->
+        <div id="result-container" class="hidden">
+            <div class="border-t border-gray-200 pt-6 space-y-6">
+                <!-- SEO Recommendations -->
+                <div id="seo-container" class="rounded-md border border-indigo-200 bg-indigo-50 p-6">
+                    <h3 class="text-xl font-semibold text-indigo-900 mb-4">SEO Recommendations (Agent 3)</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Meta Title</label>
+                            <input type="text" id="seo-title" readonly class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm sm:text-sm p-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Meta Description</label>
+                            <textarea id="seo-description" readonly rows="2" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm sm:text-sm p-2"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Keywords</label>
+                            <p id="seo-keywords" class="text-sm text-gray-800 mt-1"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blog Post Content -->
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Final Blog Post (Agent 2)</h3>
+                    <div id="result-content" class="prose prose-indigo max-w-none rounded-md border border-gray-200 bg-gray-50 p-6">
+                        <!-- Content injected by app.js -->
+                    </div>
+                </div>
+
+                <!-- Sources Display -->
+                <div id="sources-container" class="hidden">
+                    <h4 class="text-lg font-medium text-gray-900 mb-2">Sources (from Agent 1)</h4>
+                    <ul id="sources-list" class="list-disc list-inside space-y-1 text-sm text-gray-600">
+                        <!-- Sources injected by app.js -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
